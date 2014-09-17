@@ -2,7 +2,7 @@ sanneal
 =======
 
 An implementation of the `simulated annealing <http://en.wikipedia.org/wiki/Simulated_annealing>`_
-optimization algorithm. Includes a few graphical demonstrations.
+optimization algorithm.
 
 Installation
 ------------
@@ -20,4 +20,12 @@ To install::
 Demos
 -----
 
-*TODO*
+(incomplete)
+
+Random pixels:
+
+.. image:: images/original.png
+
+After "annealing":
+
+.. image:: images/final.png
