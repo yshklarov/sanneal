@@ -23,9 +23,9 @@ def find_minimum(state, cooling_schedule, get_energy, next_neighbor, p_move):
             print("Temperature: " + str(temp))
             print("Energy: " + str(energy))
     
-    print("Final energy (incremental calculation):" + str(energy))
-    print("Initial energy: " + str(einit))
-    print("Minimum state is " + str(state) + " with energy " +
-          str(get_energy(state)) + ".")
+    #print("Final energy (incremental calculation):" + str(energy))
+    #print("Initial energy: " + str(einit))
+    #print("Minimum state is " + str(state) + " with energy " +
+    #      str(get_energy(state)) + ".")
     
     return state

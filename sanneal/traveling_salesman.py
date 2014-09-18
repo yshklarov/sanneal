@@ -25,11 +25,10 @@ def get_neighbor_getter(energy_of):
         length = len(state)
         newstate = state.copy()
         
-        # Swap two neighboring cities
-        i = random.randint(0, length-1)
-        tmpcountry = newstate[i]
-        newstate[i] = newstate[(i+1) % length]
-        newstate[(i+1) % length] = tmpcountry
+        # Reverse a random consecutive sequence
+        seq_len = random.randint(2, length-1)
+        i = random.randint(0, length - seq_len)
+        newstate[i:i+seq_len] = reversed(newstate[i:i+seq_len])
         
         return (newstate, energy_of(newstate))
     
@@ -57,35 +56,43 @@ def temperature():
     while temp > 0:
         yield temp
         count += 1
-        temp = temp * 0.99999 - 0.000000001
+        temp = temp * 0.99995 - 1e-11
     print("Cooling complete. Number of iterations: " + str(count))
 
 
 def main():
     print('Let''s visit all the capitals! Calculating fastest route.')
     
-    with open('sanneal/dist.csv', newline='') as csvfile:
+    with open('sanneal/capdist.csv', newline='') as csvfile:
         capreader = csv.DictReader(csvfile, delimiter=',')
         distances = {}
         for row in capreader:
-            # (country 1, country 2, distance in km)
+            # (country 1, country 2): distance in km
             distances[(row['ida'], row['idb'])] = int(row['kmdist'])
+
+    with open('sanneal/capabbrevs.dat', newline='', encoding='utf-8') as csvfile:
+        abbrreader = csv.reader(csvfile, delimiter='|')
+        names = {}
+        for row in abbrreader:
+            # country abbreviation: full name
+            names[row[0]] = row[1]
 
     dist_getter = get_dist_getter(distances)
     
     # Get a list of unique countries
     initial_itinerary = list(set(country for (country, _) in distances))
     initial_itinerary.sort()
-    print('Countries: ' + ', '.join(initial_itinerary) + '.')
-    print('Total distance: ' + str(dist_getter(initial_itinerary)) + '.')
+    pretty = [names[abbr] for abbr in initial_itinerary]
+    print('Countries: ' + ', '.join(pretty) + '.')
+    print('Total distance: ' + str(dist_getter(initial_itinerary)) + ' km.')
     
     final_itinerary = sanneal.find_minimum(initial_itinerary,
             temperature(), dist_getter, get_neighbor_getter(dist_getter), p_move)
     
-    print("Itinerary: " + ', '.join(final_itinerary) + '.')
-    print('Total distance: ' + str(dist_getter(final_itinerary)) + '.')
+    pretty = [names[abbr] for abbr in final_itinerary]
+    print('Itinerary: ' + ', '.join(pretty) + '.')
+    print('Total distance: ' + str(dist_getter(final_itinerary)) + ' km.')
 
 
 if __name__ == '__main__':
-    #cProfile.run('main()')
     main()
